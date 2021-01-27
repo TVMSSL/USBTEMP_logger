@@ -75,21 +75,21 @@ class ULTI02(UIExample):
             data_array = numpy.around(data_array,3)
             for x in range(0,8):
                 data_example+=str(data_array[x]) + ';'
-                data_example_temps+=str(interp_resist_to_temp_np1000(data_array[x])) + ';'
+                data_example_temps+=str(numpy.around(interp_resist_to_temp_np1000(data_array[x]),3)) + ';'
 
             # Check err_code for OUTOFRANGE or OPENCONNECTION. All other
             # error codes will raise a ULError and are checked by the except
             # clause.
-            if err_code == ErrorCode.OUTOFRANGE:
-                self.warning_label["text"] = (
-                    "A thermocouple input is out of range.")
-            elif err_code == ErrorCode.OPENCONNECTION:
-                self.warning_label["text"] = (
-                    "A thermocouple input has an open connection.")
-            else:
-                self.warning_label["text"] = ""
+            # if err_code == ErrorCode.OUTOFRANGE:
+            #     self.warning_label["text"] = (
+            #         "A thermocouple input is out of range.")
+            # elif err_code == ErrorCode.OPENCONNECTION:
+            #     self.warning_label["text"] = (
+            #         "A thermocouple input has an open connection.")
+            # else:
+            #     self.warning_label["text"] = ""
             
-            self.display_values(data_array)
+            # self.display_values(data_array)
             
             # creates variables for time format in log
             current_date_and_time = datetime.datetime.now()
@@ -205,7 +205,7 @@ class ULTI02(UIExample):
         self.high_chan = self.get_high_channel_num()
         self.test_name = self.get_test_name()
         self.board_num = self.get_board_num()
-        self.recreate_data_frame()
+        # self.recreate_data_frame()
         self.start_time = time.time()
         self.start_time_timing = time.time()
         self.last_logged_time = 'Nothing logged yet'
@@ -371,14 +371,14 @@ class ULTI02(UIExample):
             self.high_channel_entry.delete(0, tk.END)
             self.high_channel_entry.insert(0, str(initial_value))
 
-        self.results_group = tk.LabelFrame(self, text="Results")
-        self.results_group.pack(fill=tk.X, anchor=tk.NW, padx=3, pady=3)
+        # self.results_group = tk.LabelFrame(self, text="Results")
+        # self.results_group.pack(fill=tk.X, anchor=tk.NW, padx=3, pady=3)
 
-        self.data_frame = tk.Frame(self.results_group)
-        self.data_frame.pack(side=tk.TOP)
+        # self.data_frame = tk.Frame(self.results_group)
+        # self.data_frame.pack(side=tk.TOP)
 
-        self.warning_label = tk.Label(self.results_group, fg="red")
-        self.warning_label.pack(side=tk.BOTTOM)
+        # self.warning_label = tk.Label(self.results_group, fg="red")
+        # self.warning_label.pack(side=tk.BOTTOM)
 
         button_frame = tk.Frame(self)
         button_frame.pack(fill=tk.X, side=tk.RIGHT, anchor=tk.SE)
