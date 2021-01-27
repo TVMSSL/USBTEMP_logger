@@ -75,7 +75,7 @@ class ULTI02(UIExample):
             data_array = numpy.around(data_array,3)
             for x in range(0,8):
                 data_example+=str(data_array[x]) + ';'
-                data_example_temps+=str(numpy.around(interp_resist_to_temp_np1000(data_array[x]),3)) + ';'
+                data_example_temps+=str(numpy.around(interp_resist_to_temp_np1000(data_array[x]),2)) + ';'
 
             # Check err_code for OUTOFRANGE or OPENCONNECTION. All other
             # error codes will raise a ULError and are checked by the except
@@ -220,7 +220,7 @@ class ULTI02(UIExample):
         # creates log_file when starting program
         current_date_and_time = datetime.datetime.now()
         current_date_and_time_filename = current_date_and_time.strftime("%Y_%m_%d-%H%M%S") + '_'
-        dir = 'temperature_logs\\'
+        dir = 'logs\\'
         filename = current_date_and_time_filename
         filemission = self.test_name
         file_ext = '.txt'
