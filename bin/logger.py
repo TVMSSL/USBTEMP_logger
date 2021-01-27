@@ -218,6 +218,8 @@ class ULTI02(UIExample):
         
     def create_log_file(self):
         # creates log_file when starting program
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
         current_date_and_time = datetime.datetime.now()
         current_date_and_time_filename = current_date_and_time.strftime("%Y_%m_%d-%H%M%S") + '_'
         dir = 'logs\\'
@@ -226,6 +228,7 @@ class ULTI02(UIExample):
         file_ext = '.txt'
         self.filefullname = dir + filename + filemission + file_ext
         file = open(self.filefullname, 'a')
+        
 
     def get_low_channel_num(self):
         try:
