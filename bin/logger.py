@@ -137,7 +137,7 @@ class ULTI02(UIExample):
                 print('Test Running.')
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
-                for x in range(0, 7):
+                for x in range(0, 8):
                     print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
                 self.verify = 3
             elif message_timing >=2 and message_timing <=3 and self.verify == 3:
@@ -145,7 +145,7 @@ class ULTI02(UIExample):
                 print('Test Running..')
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
-                for x in range(0, 7):
+                for x in range(0, 8):
                     print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
                 self.verify = 4
             elif message_timing >=3 and message_timing <=4 and self.verify == 4:
