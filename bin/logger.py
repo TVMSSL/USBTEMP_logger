@@ -66,8 +66,8 @@ class ULTI02(UIExample):
         try:
             # Get the values from the device (optional parameters omitted)
             # Temp scale set to NOSCALE and conversion will be done via lookup table within this program
-            err_code, data_array = ul.t_in_scan(self.board_num, self.low_chan,
-                                                self.high_chan, TempScale.NOSCALE)
+            err_code, data_array = ul.t_in_scan(self.board_num, 0,
+                                                7, TempScale.NOSCALE)
             # create array of temperature and resistances to be logged, data_array is raw resistance 
             data_example = ""
             data_example_temps = ""
@@ -130,7 +130,7 @@ class ULTI02(UIExample):
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
                 for x in range(0, 8):
-                    print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
+                    print(round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C', "\t", self.channel_list[x])
                 self.verify = 2
             elif message_timing >=1 and message_timing <=2 and self.verify == 2:
                 os.system('cls')
@@ -138,7 +138,7 @@ class ULTI02(UIExample):
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
                 for x in range(0, 8):
-                    print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
+                    print(round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C', "\t", self.channel_list[x])
                 self.verify = 3
             elif message_timing >=2 and message_timing <=3 and self.verify == 3:
                 os.system('cls')
@@ -146,7 +146,7 @@ class ULTI02(UIExample):
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
                 for x in range(0, 8):
-                    print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
+                    print(round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C', "\t", self.channel_list[x])
                 self.verify = 4
             elif message_timing >=3 and message_timing <=4 and self.verify == 4:
                 os.system('cls')
@@ -154,7 +154,7 @@ class ULTI02(UIExample):
                 print('Test Name =', self.test_name)
                 print('Last logged data:', self.last_logged_time)
                 for x in range(0, 8):
-                    print('Channel', x, 'T=', round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C')
+                    print(round(interp_resist_to_temp_np1000(data_temp_display[x]),2), '°C', "\t", self.channel_list[x])
                 self.verify = 5
             elif message_timing > 4 and self.verify == 5:
                 self.start_time_timing = time.time()
@@ -176,34 +176,43 @@ class ULTI02(UIExample):
             show_ul_error(e)
 
 
-    def display_values(self, array):
-        low_chan = self.low_chan
-        high_chan = self.high_chan
+    # def display_values(self, array):
+    #     low_chan = self.low_chan
+    #     high_chan = self.high_chan
 
-        for chan_num in range(low_chan, high_chan + 1):
-            index = chan_num - low_chan
-            self.data_labels[index]["text"] = '{:.3f}'.format(
-                array[index]) + "\n"
+    #     for chan_num in range(low_chan, high_chan + 1):
+    #         index = chan_num - low_chan
+    #         self.data_labels[index]["text"] = '{:.3f}'.format(
+    #             array[index]) + "\n"
 
     def stop(self):
         self.running = False
         self.start_button["command"] = self.start
         self.start_button["text"] = "Start"
-        self.low_channel_entry["state"] = tk.NORMAL
-        self.high_channel_entry["state"] = tk.NORMAL
+        # self.low_channel_entry["state"] = tk.NORMAL
+        # self.high_channel_entry["state"] = tk.NORMAL
 
     def start(self):
         os.system('cls')
         self.running = True
         self.start_button["command"] = self.stop
         self.start_button["text"] = "Stop"
-        self.low_channel_entry["state"] = tk.DISABLED
-        self.high_channel_entry["state"] = tk.DISABLED
+        # self.low_channel_entry["state"] = tk.DISABLED
+        # self.high_channel_entry["state"] = tk.DISABLED
         self.test_name_entry["state"] = tk.DISABLED
         self.board_number_entry["state"] = tk.DISABLED
-        self.low_chan = self.get_low_channel_num()
-        self.high_chan = self.get_high_channel_num()
+        # self.low_chan = self.get_low_channel_num()
+        # self.high_chan = self.get_high_channel_num()
         self.test_name = self.get_test_name()
+        self.channel0 = self.get_channel0()
+        self.channel1 = self.get_channel1()
+        self.channel2 = self.get_channel2()
+        self.channel3 = self.get_channel3()
+        self.channel4 = self.get_channel4()
+        self.channel5 = self.get_channel5()
+        self.channel6 = self.get_channel6()
+        self.channel7 = self.get_channel7()
+        self.channel_list = [self.channel0, self.channel1, self.channel2, self.channel3, self.channel4, self.channel5, self.channel6, self.channel7]
         self.board_num = self.get_board_num()
         # self.recreate_data_frame()
         self.start_time = time.time()
@@ -230,23 +239,73 @@ class ULTI02(UIExample):
         file = open(self.filefullname, 'a')
         
 
-    def get_low_channel_num(self):
-        try:
-            return int(self.low_channel_entry.get())
-        except ValueError:
-            return 0
+    # def get_low_channel_num(self):
+    #     try:
+    #         return int(self.low_channel_entry.get())
+    #     except ValueError:
+    #         return 0
 
-    def get_high_channel_num(self):
-        try:
-            return int(self.high_channel_entry.get())
-        except ValueError:
-            return 0
+    # def get_high_channel_num(self):
+    #     try:
+    #         return int(self.high_channel_entry.get())
+    #     except ValueError:
+    #         return 0
 
     def get_test_name(self):
         try:
             return self.test_name_entry.get("1.0",'end-1c')
         except ValueError:
             return 0
+
+    def get_channel0(self):
+        try:
+            return self.channel0_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel1(self):
+        try:
+            return self.channel1_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel2(self):
+        try:
+            return self.channel2_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel3(self):
+        try:
+            return self.channel3_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel4(self):
+        try:
+            return self.channel4_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel5(self):
+        try:
+            return self.channel5_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel6(self):
+        try:
+            return self.channel6_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+    def get_channel7(self):
+        try:
+            return self.channel7_name_entry.get("1.0",'end-1c')
+        except ValueError:
+            return 0
+
+
 
     def get_board_num(self):
         try:
@@ -267,34 +326,34 @@ class ULTI02(UIExample):
 
         return True
 
-    def recreate_data_frame(self):
-        low_chan = self.low_chan
-        high_chan = self.high_chan
-        channels_per_row = 4
+    # def recreate_data_frame(self):
+    #     # low_chan = self.low_chan
+    #     # high_chan = self.high_chan
+    #     # channels_per_row = 4
 
-        new_data_frame = tk.Frame(self.results_group)
+    #     new_data_frame = tk.Frame(self.results_group)
 
-        self.data_labels = []
-        row = 0
-        column = 0
-        # Add the labels for each channel
-        for chan_num in range(low_chan, high_chan + 1):
-            chan_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
-            chan_label["text"] = "Channel " + str(chan_num)
-            chan_label.grid(row=row, column=column)
+    #     self.data_labels = []
+    #     row = 0
+    #     column = 0
+    #     # Add the labels for each channel
+    #     for chan_num in range(low_chan, high_chan + 1):
+    #         chan_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
+    #         chan_label["text"] = "Channel " + str(chan_num)
+    #         chan_label.grid(row=row, column=column)
 
-            data_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
-            data_label.grid(row=row + 1, column=column)
-            self.data_labels.append(data_label)
+    #         data_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
+    #         data_label.grid(row=row + 1, column=column)
+    #         self.data_labels.append(data_label)
 
-            column += 1
-            if column >= channels_per_row:
-                row += 2
-                column = 0
+    #         column += 1
+    #         if column >= channels_per_row:
+    #             row += 2
+    #             column = 0
 
-        self.data_frame.destroy()
-        self.data_frame = new_data_frame
-        self.data_frame.pack(side=tk.TOP)
+    #     self.data_frame.destroy()
+    #     self.data_frame = new_data_frame
+    #     self.data_frame.pack(side=tk.TOP)
 
     def create_widgets(self):
         '''Create the tkinter UI'''
@@ -312,34 +371,34 @@ class ULTI02(UIExample):
 
         if self.ai_info.num_temp_chans > 1:
 
-            # Defining low channel entry
+            # # Defining low channel entry
 
-            low_channel_entry_label = tk.Label(main_frame)
-            low_channel_entry_label["text"] = "Low Channel Number:"
-            low_channel_entry_label.grid(
-                row=curr_row, column=0, sticky=tk.W)
+            # low_channel_entry_label = tk.Label(main_frame)
+            # low_channel_entry_label["text"] = "Low Channel Number:"
+            # low_channel_entry_label.grid(
+            #     row=curr_row, column=0, sticky=tk.W)
 
-            self.low_channel_entry = tk.Spinbox(
-                main_frame, from_=0,
-                to=max(self.ai_info.num_temp_chans - 1, 0),
-                validate='key', validatecommand=(channel_vcmd, '%P'))
-            self.low_channel_entry.grid(
-                row=curr_row, column=1, sticky=tk.W)
+            # self.low_channel_entry = tk.Spinbox(
+            #     main_frame, from_=0,
+            #     to=max(self.ai_info.num_temp_chans - 1, 0),
+            #     validate='key', validatecommand=(channel_vcmd, '%P'))
+            # self.low_channel_entry.grid(
+            #     row=curr_row, column=1, sticky=tk.W)
 
-            # Defining high channel entry
+            # # Defining high channel entry
 
-            curr_row += 1
-            high_channel_entry_label = tk.Label(main_frame)
-            high_channel_entry_label["text"] = "High Channel Number:"
-            high_channel_entry_label.grid(
-                row=curr_row, column=0, sticky=tk.W)
+            # curr_row += 1
+            # high_channel_entry_label = tk.Label(main_frame)
+            # high_channel_entry_label["text"] = "High Channel Number:"
+            # high_channel_entry_label.grid(
+            #     row=curr_row, column=0, sticky=tk.W)
 
-            self.high_channel_entry = tk.Spinbox(
-                main_frame, from_=0,
-                to=max(self.ai_info.num_temp_chans - 1, 0),
-                validate='key', validatecommand=(channel_vcmd, '%P'))
-            self.high_channel_entry.grid(
-                row=curr_row, column=1, sticky=tk.W)
+            # self.high_channel_entry = tk.Spinbox(
+            #     main_frame, from_=0,
+            #     to=max(self.ai_info.num_temp_chans - 1, 0),
+            #     validate='key', validatecommand=(channel_vcmd, '%P'))
+            # self.high_channel_entry.grid(
+            #     row=curr_row, column=1, sticky=tk.W)
 
             # Defining test name entry
 
@@ -352,6 +411,114 @@ class ULTI02(UIExample):
             self.test_name_entry = tk.Text(main_frame, height=1, width=30)
             self.test_name_entry.grid(
                 row=curr_row, column=1, sticky=tk.W)
+
+            self.test_name_entry.insert(tk.END, 'Test Name')
+
+             # Defining channel #0 name
+
+            curr_row += 1
+            channel0_name_entry_label = tk.Label(main_frame)
+            channel0_name_entry_label["text"] = "Channel 0"
+            channel0_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel0_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel0_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel0_name_entry.insert(tk.END, 'Channel 0')
+
+
+            # Defining channel #1 name
+
+            curr_row += 1
+            channel1_name_entry_label = tk.Label(main_frame)
+            channel1_name_entry_label["text"] = "Channel 1"
+            channel1_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel1_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel1_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel1_name_entry.insert(tk.END, 'Channel 1')  
+
+            # Defining channel #2 name
+
+            curr_row += 1
+            channel2_name_entry_label = tk.Label(main_frame)
+            channel2_name_entry_label["text"] = "Channel 2"
+            channel2_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel2_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel2_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel2_name_entry.insert(tk.END, 'Channel 2')  
+
+            # Defining channel #3 name
+
+            curr_row += 1
+            channel3_name_entry_label = tk.Label(main_frame)
+            channel3_name_entry_label["text"] = "Channel 3"
+            channel3_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel3_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel3_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel3_name_entry.insert(tk.END, 'Channel 3')  
+
+            # Defining channel #4 name
+
+            curr_row += 1
+            channel4_name_entry_label = tk.Label(main_frame)
+            channel4_name_entry_label["text"] = "Channel 4"
+            channel4_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel4_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel4_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel4_name_entry.insert(tk.END, 'Channel 4')               
+
+            # Defining channel #5 name
+
+            curr_row += 1
+            channel5_name_entry_label = tk.Label(main_frame)
+            channel5_name_entry_label["text"] = "Channel 5"
+            channel5_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel5_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel5_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel5_name_entry.insert(tk.END, 'Channel 5')
+                           
+            # Defining channel #6 name
+
+            curr_row += 1
+            channel6_name_entry_label = tk.Label(main_frame)
+            channel6_name_entry_label["text"] = "Channel 6"
+            channel6_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel6_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel6_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel6_name_entry.insert(tk.END, 'Channel 6')               
+
+            # Defining channel #7 name
+
+            curr_row += 1
+            channel7_name_entry_label = tk.Label(main_frame)
+            channel7_name_entry_label["text"] = "Channel 7"
+            channel7_name_entry_label.grid(
+                row=curr_row, column=0, sticky=tk.W)            
+
+            self.channel7_name_entry = tk.Text(main_frame, height=1, width=30)
+            self.channel7_name_entry.grid(
+                row=curr_row, column=1, sticky=tk.W)               
+            self.channel7_name_entry.insert(tk.END, 'Channel 7')
+
 
             # Defining board number entry
 
@@ -370,9 +537,9 @@ class ULTI02(UIExample):
 
             # Default Values
 
-            initial_value = min(self.ai_info.num_temp_chans - 1, 7)
-            self.high_channel_entry.delete(0, tk.END)
-            self.high_channel_entry.insert(0, str(initial_value))
+            # initial_value = min(self.ai_info.num_temp_chans - 1, 7)
+            # self.high_channel_entry.delete(0, tk.END)
+            # self.high_channel_entry.insert(0, str(initial_value))
 
         # self.results_group = tk.LabelFrame(self, text="Results")
         # self.results_group.pack(fill=tk.X, anchor=tk.NW, padx=3, pady=3)
