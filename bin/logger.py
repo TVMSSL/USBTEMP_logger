@@ -68,11 +68,13 @@ class ULTI02(UIExample):
             # Temp scale set to NOSCALE and conversion will be done via lookup table within this program
             err_code, data_array = ul.t_in_scan(self.board_num, 0,
                                                 7, TempScale.NOSCALE)
+
             # create array of temperature and resistances to be logged, data_array is raw resistance 
             data_example = ""
             data_example_temps = ""
             data_temp_display = numpy.array(data_array)
             data_array = numpy.around(data_array,3)
+            temp_array = interp_resist_to_temp_np1000(data_array)
             for x in range(0,8):
                 data_example+=str(data_array[x]) + ';'
                 data_example_temps+=str(numpy.around(interp_resist_to_temp_np1000(data_array[x]),2)) + ';'
@@ -89,7 +91,7 @@ class ULTI02(UIExample):
             # else:
             #     self.warning_label["text"] = ""
             
-            # self.display_values(data_array)
+            self.display_values(temp_array)
             
             # creates variables for time format in log
             current_date_and_time = datetime.datetime.now()
@@ -176,14 +178,14 @@ class ULTI02(UIExample):
             show_ul_error(e)
 
 
-    # def display_values(self, array):
-    #     low_chan = self.low_chan
-    #     high_chan = self.high_chan
+    def display_values(self, array):
+        low_chan = 0
+        high_chan = 7
 
-    #     for chan_num in range(low_chan, high_chan + 1):
-    #         index = chan_num - low_chan
-    #         self.data_labels[index]["text"] = '{:.3f}'.format(
-    #             array[index]) + "\n"
+        for chan_num in range(low_chan, high_chan + 1):
+            index = chan_num - low_chan
+            self.data_labels[index]["text"] = '{:.3f}'.format(
+                array[index]) + "\n"
 
     def stop(self):
         self.running = False
@@ -214,7 +216,7 @@ class ULTI02(UIExample):
         self.channel7 = self.get_channel7()
         self.channel_list = [self.channel0, self.channel1, self.channel2, self.channel3, self.channel4, self.channel5, self.channel6, self.channel7]
         self.board_num = self.get_board_num()
-        # self.recreate_data_frame()
+        self.recreate_data_frame()
         self.start_time = time.time()
         self.start_time_timing = time.time()
         self.last_logged_time = 'Nothing logged yet'
@@ -326,34 +328,34 @@ class ULTI02(UIExample):
 
         return True
 
-    # def recreate_data_frame(self):
-    #     # low_chan = self.low_chan
-    #     # high_chan = self.high_chan
-    #     # channels_per_row = 4
+    def recreate_data_frame(self):
+        low_chan = 0
+        high_chan = 7
+        channels_per_row = 4
 
-    #     new_data_frame = tk.Frame(self.results_group)
+        new_data_frame = tk.Frame(self.results_group)
 
-    #     self.data_labels = []
-    #     row = 0
-    #     column = 0
-    #     # Add the labels for each channel
-    #     for chan_num in range(low_chan, high_chan + 1):
-    #         chan_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
-    #         chan_label["text"] = "Channel " + str(chan_num)
-    #         chan_label.grid(row=row, column=column)
+        self.data_labels = []
+        row = 0
+        column = 0
+        # Add the labels for each channel
+        for chan_num in range(low_chan, high_chan + 1):
+            chan_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
+            chan_label["text"] = "Channel " + str(chan_num)
+            chan_label.grid(row=row, column=column)
 
-    #         data_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
-    #         data_label.grid(row=row + 1, column=column)
-    #         self.data_labels.append(data_label)
+            data_label = tk.Label(new_data_frame, justify=tk.LEFT, padx=3)
+            data_label.grid(row=row + 1, column=column)
+            self.data_labels.append(data_label)
 
-    #         column += 1
-    #         if column >= channels_per_row:
-    #             row += 2
-    #             column = 0
+            column += 1
+            if column >= channels_per_row:
+                row += 2
+                column = 0
 
-    #     self.data_frame.destroy()
-    #     self.data_frame = new_data_frame
-    #     self.data_frame.pack(side=tk.TOP)
+        self.data_frame.destroy()
+        self.data_frame = new_data_frame
+        self.data_frame.pack(side=tk.TOP)
 
     def create_widgets(self):
         '''Create the tkinter UI'''
@@ -541,14 +543,14 @@ class ULTI02(UIExample):
             # self.high_channel_entry.delete(0, tk.END)
             # self.high_channel_entry.insert(0, str(initial_value))
 
-        # self.results_group = tk.LabelFrame(self, text="Results")
-        # self.results_group.pack(fill=tk.X, anchor=tk.NW, padx=3, pady=3)
+        self.results_group = tk.LabelFrame(self, text="Results")
+        self.results_group.pack(fill=tk.X, anchor=tk.NW, padx=3, pady=3)
 
-        # self.data_frame = tk.Frame(self.results_group)
-        # self.data_frame.pack(side=tk.TOP)
+        self.data_frame = tk.Frame(self.results_group)
+        self.data_frame.pack(side=tk.TOP)
 
-        # self.warning_label = tk.Label(self.results_group, fg="red")
-        # self.warning_label.pack(side=tk.BOTTOM)
+        self.warning_label = tk.Label(self.results_group, fg="red")
+        self.warning_label.pack(side=tk.BOTTOM)
 
         button_frame = tk.Frame(self)
         button_frame.pack(fill=tk.X, side=tk.RIGHT, anchor=tk.SE)
